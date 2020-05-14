@@ -1,6 +1,5 @@
-require "porgy/version"
+require 'porgy/version'
 
-module Porgy
-  class Error < StandardError; end
-  # Your code goes here...
-end
+require 'porgy/cli'
+require 'porgy/cli/init_command.rb'
+require 'porgy/cli/help_command.rb'

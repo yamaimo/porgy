@@ -1,0 +1,10 @@
+target:
+    - name: all
+      document: #{documents}
+      script: #{scripts}
+      config: default
+
+default_target: all
+
+config:
+    - name: default
