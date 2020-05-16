@@ -1,4 +1,5 @@
 require 'porgy/version'
+
 require 'optparse'
 
 module Porgy

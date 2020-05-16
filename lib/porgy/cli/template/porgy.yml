@@ -1,10 +1,13 @@
-target:
-    - name: all
-      document: #{documents}
-      script: #{scripts}
-      config: default
+version: 0.1.0
 
 default_target: all
 
-config:
+targets:
+    - name: all
+      documents: #{documents}
+      scripts: #{scripts}
+      output: book.pdf
+      style: default
+
+styles:
     - name: default

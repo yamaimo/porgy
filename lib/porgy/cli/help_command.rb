@@ -1,3 +1,5 @@
+require 'porgy/cli'
+
 module Porgy
   module CLI
     class HelpCommand

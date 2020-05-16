@@ -1,6 +1,7 @@
 require 'porgy/cli'
-require 'optparse'
+
 require 'fileutils'
+require 'optparse'
 require 'pathname'
 
 module Porgy
