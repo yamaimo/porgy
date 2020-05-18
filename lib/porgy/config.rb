@@ -1,3 +1,6 @@
+require 'porgy/config/target'
+require 'porgy/config/style'
+
 require 'yaml'
 
 module Porgy
@@ -29,30 +32,6 @@ module Porgy
       found = @styles.filter{|style| style.name == name}
       raise "Style '#{name}' is not found." if found.empty?
       found[0]
-    end
-
-    class Target
-      def initialize(data)
-        @name = data['name'] or raise "Target has no name."
-        @documents = data['documents'] or raise "Target '#{@name}' has no documents."
-        @scripts = data['scripts'] || []
-        @output = data['output'] or raise "Target '#{@name}' has no output."
-        @style = data['style'] or raise "Target '#{@name}' has no style."
-      end
-
-      attr_reader :name, :documents, :scripts, :output, :style
-
-      def sources
-        @documents + @scripts
-      end
-    end
-
-    class Style
-      def initialize(data)
-        @name = data['name']
-      end
-
-      attr_reader :name
     end
   end
 end

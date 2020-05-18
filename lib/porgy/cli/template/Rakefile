@@ -8,7 +8,7 @@ config = Porgy::Config.load(porgy_file)
 config.targets.each do |target|
   namespace :build_ do
     task target.name => [target.output]
-    file target.output => target.sources do
+    file target.output => (target.sources + [__FILE__, porgy_file]) do
       Porgy::Builder.build(target.name, config)
     end
   end

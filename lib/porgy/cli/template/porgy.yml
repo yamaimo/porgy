@@ -11,3 +11,4 @@ targets:
 
 styles:
     - name: default
+      paper_size: a4
