@@ -12,3 +12,4 @@ targets:
 styles:
     - name: default
       paper_size: a4
+      paper_margin: 0.5.in

@@ -1,44 +1,55 @@
-require 'prawn/measurement_extensions'
+require 'porgy/config/style/length_util'
 
 module Porgy
   class Config
     class Style
-      module PaperSize
-        ISO_A0  = [841.mm, 1189.mm]
-        ISO_A1  = [594.mm,  841.mm]
-        ISO_A2  = [420.mm,  594.mm]
-        ISO_A3  = [297.mm,  420.mm]
-        ISO_A4  = [210.mm,  297.mm]
-        ISO_A5  = [148.mm,  210.mm]
-        ISO_A6  = [105.mm,  148.mm]
-        ISO_A7  = [ 74.mm,  105.mm]
-        ISO_A8  = [ 52.mm,   74.mm]
-        ISO_A9  = [ 37.mm,   52.mm]
-        ISO_A10 = [ 26.mm,   37.mm]
+      class PaperSize
+        def initialize(width, height)
+          @width = width
+          @height = height
+        end
 
-        ISO_B0  = [1000.mm, 1414.mm]
-        ISO_B1  = [ 707.mm, 1000.mm]
-        ISO_B2  = [ 500.mm,  707.mm]
-        ISO_B3  = [ 353.mm,  500.mm]
-        ISO_B4  = [ 250.mm,  353.mm]
-        ISO_B5  = [ 176.mm,  250.mm]
-        ISO_B6  = [ 125.mm,  176.mm]
-        ISO_B7  = [  88.mm,  125.mm]
-        ISO_B8  = [  63.mm,   88.mm]
-        ISO_B9  = [  44.mm,   63.mm]
-        ISO_B10 = [  31.mm,   44.mm]
+        attr_reader :width, :height
 
-        JIS_B0  = [1030.mm, 1456.mm]
-        JIS_B1  = [ 728.mm, 1030.mm]
-        JIS_B2  = [ 515.mm,  728.mm]
-        JIS_B3  = [ 364.mm,  515.mm]
-        JIS_B4  = [ 257.mm,  364.mm]
-        JIS_B5  = [ 182.mm,  257.mm]
-        JIS_B6  = [ 128.mm,  182.mm]
-        JIS_B7  = [  91.mm,  128.mm]
-        JIS_B8  = [  64.mm,   91.mm]
-        JIS_B9  = [  45.mm,   64.mm]
-        JIS_B10 = [  32.mm,   45.mm]
+        def to_prawn
+          {page_size: [@width, @height]}
+        end
+
+        ISO_A0  = PaperSize.new(841.mm, 1189.mm)
+        ISO_A1  = PaperSize.new(594.mm,  841.mm)
+        ISO_A2  = PaperSize.new(420.mm,  594.mm)
+        ISO_A3  = PaperSize.new(297.mm,  420.mm)
+        ISO_A4  = PaperSize.new(210.mm,  297.mm)
+        ISO_A5  = PaperSize.new(148.mm,  210.mm)
+        ISO_A6  = PaperSize.new(105.mm,  148.mm)
+        ISO_A7  = PaperSize.new( 74.mm,  105.mm)
+        ISO_A8  = PaperSize.new( 52.mm,   74.mm)
+        ISO_A9  = PaperSize.new( 37.mm,   52.mm)
+        ISO_A10 = PaperSize.new( 26.mm,   37.mm)
+
+        ISO_B0  = PaperSize.new(1000.mm, 1414.mm)
+        ISO_B1  = PaperSize.new( 707.mm, 1000.mm)
+        ISO_B2  = PaperSize.new( 500.mm,  707.mm)
+        ISO_B3  = PaperSize.new( 353.mm,  500.mm)
+        ISO_B4  = PaperSize.new( 250.mm,  353.mm)
+        ISO_B5  = PaperSize.new( 176.mm,  250.mm)
+        ISO_B6  = PaperSize.new( 125.mm,  176.mm)
+        ISO_B7  = PaperSize.new(  88.mm,  125.mm)
+        ISO_B8  = PaperSize.new(  63.mm,   88.mm)
+        ISO_B9  = PaperSize.new(  44.mm,   63.mm)
+        ISO_B10 = PaperSize.new(  31.mm,   44.mm)
+
+        JIS_B0  = PaperSize.new(1030.mm, 1456.mm)
+        JIS_B1  = PaperSize.new( 728.mm, 1030.mm)
+        JIS_B2  = PaperSize.new( 515.mm,  728.mm)
+        JIS_B3  = PaperSize.new( 364.mm,  515.mm)
+        JIS_B4  = PaperSize.new( 257.mm,  364.mm)
+        JIS_B5  = PaperSize.new( 182.mm,  257.mm)
+        JIS_B6  = PaperSize.new( 128.mm,  182.mm)
+        JIS_B7  = PaperSize.new(  91.mm,  128.mm)
+        JIS_B8  = PaperSize.new(  64.mm,   91.mm)
+        JIS_B9  = PaperSize.new(  45.mm,   64.mm)
+        JIS_B10 = PaperSize.new(  32.mm,   45.mm)
 
         List = {
           'a0'  => ISO_A0,
@@ -110,14 +121,11 @@ module Porgy
             case obj
             when String
               paper_size = List[obj.downcase] || Default
-            when Array
-              if obj.size == 2
-                # allow units such as [10.cm, 12.cm]
-                width = eval(obj[0])
-                height = eval(obj[1])
-                if width > 0 && height > 0
-                  paper_size = [width, height]
-                end
+            when Hash
+              width = Style.eval_length(obj['width'])
+              height = Style.eval_length(obj['height'])
+              if width > 0 && height > 0
+                paper_size = PaperSize.new(width, height)
               end
             end
           end
