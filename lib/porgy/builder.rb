@@ -9,7 +9,7 @@ module Porgy
       style = config.find_style(target.style)
 
       intermediate = Porgy::Parser.parse(target.documents)
-      Porgy::Generator.generate(target.output, intermediate, style)
+      Porgy::Generator.generate(target.output, intermediate, style, config)
     end
   end
 end

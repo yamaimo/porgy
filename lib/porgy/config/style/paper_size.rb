@@ -1,4 +1,4 @@
-require 'porgy/config/style/length_util'
+require 'porgy/config/style/length'
 
 module Porgy
   class Config
@@ -122,8 +122,8 @@ module Porgy
             when String
               paper_size = List[obj.downcase] || Default
             when Hash
-              width = Style.eval_length(obj['width'])
-              height = Style.eval_length(obj['height'])
+              width = Style::Length.load(obj['width'])
+              height = Style::Length.load(obj['height'])
               if width > 0 && height > 0
                 paper_size = PaperSize.new(width, height)
               end

@@ -1,4 +1,4 @@
-require 'porgy/config/style/length_util'
+require 'porgy/config/style/length'
 
 module Porgy
   class Config
@@ -29,15 +29,15 @@ module Porgy
           unless obj.nil?
             case obj
             when String
-              length = Style.eval_length(obj)
+              length = Style::Length.load(obj)
               if length > 0
                 paper_margin = PaperMargin.new(length, length, length, length)
               end
             when Hash
-              top = Style.eval_length(obj['top'], Default.top)
-              right = Style.eval_length(obj['right'], Default.right)
-              bottom = Style.eval_length(obj['bottom'], Default.bottom)
-              left = Style.eval_length(obj['left'], Default.left)
+              top = Style::Length.load(obj['top'], Default.top)
+              right = Style::Length.load(obj['right'], Default.right)
+              bottom = Style::Length.load(obj['bottom'], Default.bottom)
+              left = Style::Length.load(obj['left'], Default.left)
               if top > 0 && right > 0 && bottom > 0 && left > 0
                 paper_margin = PaperMargin.new(top, right, bottom, left)
               end
