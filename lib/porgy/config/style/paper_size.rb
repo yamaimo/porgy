@@ -4,6 +4,27 @@ module Porgy
   class Config
     class Style
       class PaperSize
+        def self.default
+          @default ||= ISO_A4
+        end
+
+        def self.load(data)
+          paper_size = self.default
+          unless data.nil?
+            case data
+            when String
+              paper_size = List[data.downcase] || self.default
+            when Hash
+              width = Style::Length.load(data['width'])
+              height = Style::Length.load(data['height'])
+              if width > 0 && height > 0
+                paper_size = PaperSize.new(width, height)
+              end
+            end
+          end
+          paper_size
+        end
+
         def initialize(width, height)
           @width = width
           @height = height
@@ -14,6 +35,8 @@ module Porgy
         def to_prawn
           {page_size: [@width, @height]}
         end
+
+        # --- predefined sizes and name list --- #
 
         ISO_A0  = PaperSize.new(841.mm, 1189.mm)
         ISO_A1  = PaperSize.new(594.mm,  841.mm)
@@ -112,25 +135,6 @@ module Porgy
           'jis b9'  => JIS_B9,
           'jis b10' => JIS_B10,
         }
-
-        Default = ISO_A4
-
-        def self.get_paper_size(obj)
-          paper_size = Default
-          unless obj.nil?
-            case obj
-            when String
-              paper_size = List[obj.downcase] || Default
-            when Hash
-              width = Style::Length.load(obj['width'])
-              height = Style::Length.load(obj['height'])
-              if width > 0 && height > 0
-                paper_size = PaperSize.new(width, height)
-              end
-            end
-          end
-          paper_size
-        end
       end
     end
   end

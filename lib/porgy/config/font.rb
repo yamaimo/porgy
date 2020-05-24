@@ -3,17 +3,24 @@ require 'pathname'
 module Porgy
   class Config
     class Font
-      class Style
-        def initialize(name, style_data)
-          @name = name
-          case style_data
-          when String
-            @file = style_data
-            @index = nil
-          when Hash
-            @file = style_data['file']
-            @index = style_data['index']
+      class Mode
+        def self.load(font_name, data)
+          mode_name = data['name'] or raise "Mode has no name."
+          file = data['file']
+          index = data['index']
+
+          if file.nil? || file.empty?
+            raise "Font file is not specified. (font: #{font_name}, mode: #{mode_name})"
           end
+
+          file = Pathname.new(file)
+          Mode.new(mode_name, file, index)
+        end
+
+        def initialize(name, file, index)
+          @name = name
+          @file = file
+          @index = index
         end
 
         attr_reader :name, :file, :index
@@ -28,46 +35,64 @@ module Porgy
         ].delete_if(&:nil?)
       end
 
-      def self.find_path(filename)
+      def self.find_path(file)
         found = nil
-        path = Pathname.new(filename)
-        if path.absolute?
-          if path.exist?
-            found = path
+
+        if file.absolute?
+          if file.exist?
+            found = file
           end
         else
-          self.search_path.each do |dir|
-            if (dir/path).exist?
-              found = dir/path
+          self.search_path.each do |path|
+            if (path/file).exist?
+              found = path/file
               break
             end
           end
         end
-        raise "Font file '#{filename}' is not found." unless found
+
+        if not found
+          raise "Font file '#{filename}' is not found."
+        end
+
         found
       end
 
-      def initialize(data)
-        @name = data['name'] or raise "Font has no name."
-        styles = data['styles'] or raise "Font '#{@name}' has no styles."
-        @styles = styles.map{|name, style_data| Style.new(name, style_data)}
-        @registered = false
+      def self.load(data)
+        name = data['name'] or raise "Font has no name."
+        modes_data = data['modes'] or raise "Font '#{name}' has no mode."
+        modes = modes_data.map do |mode_data|
+          Mode.load(name, mode_data)
+        end
+
+        Font.new(name, modes)
       end
 
-      attr_reader :name, :styles
+      def initialize(name, modes)
+        @name = name
+        @modes = modes
+        @document = nil
+      end
+
+      attr_reader :name, :modes
 
       def register(document)
-        unless @registered
-          style_hash = @styles.map do |style|
-            key = style.name.to_s
-            path = Font.find_path(Pathname.new(style.file))
-            index = style.index
+        if @document.nil? || (! @document.equal?(document))
+          document.font_families[@name] = modes_to_prawn
+          @document = document
+        end
+      end
+
+      private
+
+      def modes_to_prawn
+          @modes.map do |mode|
+            key = mode.name.to_s
+            path = Font.find_path(mode.file)
+            index = mode.index
             setting = index.nil? ? path : {file: path, font: index}
             [key, setting]
           end.to_h
-          document.font_families[@name] = style_hash
-          @registered = true
-        end
       end
     end
   end

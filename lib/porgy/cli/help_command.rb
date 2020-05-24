@@ -1,4 +1,4 @@
-require 'porgy/cli'
+require 'porgy/cli/application'
 
 module Porgy
   module CLI

@@ -6,16 +6,55 @@ require 'yaml'
 
 module Porgy
   class Config
-    def self.load(file)
-      data = YAML.load_file(file)
-      Config.new(data)
+    def self.porgy_yaml_template
+      <<~END_OF_PORGY_YAML
+        version: 0.1.0
+
+        default_target: all
+
+        targets:
+            - name: all
+              documents: \#{documents}
+              scripts: \#{scripts}
+              output: book.pdf
+              style: default
+
+        styles:
+            - name: default
+              paper_size: a4
+              paper_margin: 0.5.in
+              font:
+                  name: ipaex
+                  mode: normal
+                  size: 10.pt
+              baseline_skip: 12.pt
+
+        fonts:
+            - name: ipaex
+              modes:
+                  - name: normal
+                    file: ipaexm.ttf
+                  - name: bold
+                    file: ipaexg.ttf
+      END_OF_PORGY_YAML
     end
 
-    def initialize(data)
-      @default_target = data['default_target']
-      @targets = data['targets'].map{|target_data| Target.new(target_data)}
-      @styles = data['styles'].map{|style_data| Style.new(style_data)}
-      @fonts = data['fonts'].map{|font_data| Font.new(font_data)}
+    def self.load(file)
+      data = YAML.load_file(file)
+
+      default_target = data['default_target']
+      targets = data['targets'].map{|target_data| Target.load(target_data)}
+      styles = data['styles'].map{|style_data| Style.load(style_data)}
+      fonts = data['fonts'].map{|font_data| Font.load(font_data)}
+
+      Config.new(default_target, targets, styles, fonts)
+    end
+
+    def initialize(default_target, targets, styles, fonts)
+      @default_target = default_target
+      @targets = targets
+      @styles = styles
+      @fonts = fonts
     end
 
     attr_reader :default_target, :targets, :styles, :fonts

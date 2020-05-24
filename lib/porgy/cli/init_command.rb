@@ -1,6 +1,6 @@
-require 'porgy/cli'
+require 'porgy/cli/application'
+require 'porgy/project'
 
-require 'fileutils'
 require 'optparse'
 require 'pathname'
 
@@ -24,9 +24,7 @@ module Porgy
 
         dir, documents, scripts = parse_args(args)
 
-        make_dir(dir)
-        output_rakefile(dir)
-        output_config(dir, documents, scripts)
+        Porgy::Project.setup(dir, documents, scripts)
       end
 
       def exit_with_usage(error_message='')
@@ -77,39 +75,6 @@ module Porgy
         end
 
         [dir, documents, scripts]
-      end
-
-      def make_dir(dir)
-        FileUtils.makedirs(dir) unless dir.exist?
-      end
-
-      def output_rakefile(dir)
-        source = template_dir + 'Rakefile'
-        dist = dir + 'Rakefile'
-
-        raise 'Rakefile already exists.' if dist.exist?
-
-        FileUtils.copy(source, dist)
-      end
-
-      def output_config(dir, documents, scripts)
-        source = template_dir + 'porgy.yml'
-        dist = dir + 'porgy.yml'
-
-        raise 'porgy.yml already exists.' if dist.exist?
-
-        template = File.read(source)
-        replaced = eval %("#{template}")
-        File.write(dist, replaced)
-
-        [documents, scripts].flatten.each do |file|
-          path = dir + file
-          FileUtils.touch(path) unless path.exist?
-        end
-      end
-
-      def template_dir
-        Pathname.new(__dir__) + 'template'
       end
     end
   end
