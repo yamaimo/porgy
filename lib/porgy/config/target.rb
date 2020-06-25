@@ -3,10 +3,10 @@ module Porgy
     class Target
       def self.load(data)
         name = data['name'] or raise "Target has no name."
-        documents = data['documents'] or raise "Target '#{@name}' has no documents."
+        documents = data['documents'] or raise "Target '#{name}' has no documents."
         scripts = data['scripts'] || []
-        output = data['output'] or raise "Target '#{@name}' has no output."
-        style = data['style'] or raise "Target '#{@name}' has no style."
+        output = data['output'] or raise "Target '#{name}' has no output."
+        style = data['style'] or raise "Target '#{name}' has no style."
 
         Target.new(name, documents, scripts, output, style)
       end

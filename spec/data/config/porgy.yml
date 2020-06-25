@@ -1,0 +1,5 @@
+version: 0.1.0
+default_target: all
+targets: [{name: target0}, {name: target1}, {name: target2}]
+styles: [{name: style0}, {name: style1}, {name: style2}, {name: style3}]
+fonts: [{name: font0}, {name: font1}, {name: font2}, {name: font3}, {name: font4}]

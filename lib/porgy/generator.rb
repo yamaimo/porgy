@@ -13,7 +13,7 @@ module Porgy
 
       font_name = style.font.name
       config.find_font(font_name).register(document)
-      document.font font_name, style: style.font.mode.to_s, size: style.font.size
+      document.font font_name, style: style.font.mode.to_sym, size: style.font.size
       document.default_leading style.baseline_skip - style.font.size
 
       intermediate.blocks.each do |block|

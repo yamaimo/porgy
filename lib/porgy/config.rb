@@ -65,7 +65,7 @@ module Porgy
 
     def find_target(name)
       found = @targets.filter{|target| target.name == name}
-      raise "Traget '#{name}' is not found." if found.empty?
+      raise "Target '#{name}' is not found." if found.empty?
       found[0]
     end
 

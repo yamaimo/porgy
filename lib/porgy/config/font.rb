@@ -13,13 +13,12 @@ module Porgy
             raise "Font file is not specified. (font: #{font_name}, mode: #{mode_name})"
           end
 
-          file = Pathname.new(file)
           Mode.new(mode_name, file, index)
         end
 
         def initialize(name, file, index)
           @name = name
-          @file = file
+          @file = Pathname.new(file)
           @index = index
         end
 
@@ -52,7 +51,7 @@ module Porgy
         end
 
         if not found
-          raise "Font file '#{filename}' is not found."
+          raise "Font file '#{file}' is not found."
         end
 
         found
@@ -87,8 +86,8 @@ module Porgy
 
       def modes_to_prawn
           @modes.map do |mode|
-            key = mode.name.to_s
-            path = Font.find_path(mode.file)
+            key = mode.name.to_sym
+            path = Font.find_path(mode.file).to_s
             index = mode.index
             setting = index.nil? ? path : {file: path, font: index}
             [key, setting]

@@ -14,17 +14,13 @@ module Porgy
             case data
             when String, Numeric
               length = Style::Length.load(data)
-              if length > 0
-                paper_margin = PaperMargin.new(length, length, length, length)
-              end
+              paper_margin = PaperMargin.new(length, length, length, length)
             when Hash
               top = Style::Length.load(data['top'], self.default.top)
               right = Style::Length.load(data['right'], self.default.right)
               bottom = Style::Length.load(data['bottom'], self.default.bottom)
               left = Style::Length.load(data['left'], self.default.left)
-              if top > 0 && right > 0 && bottom > 0 && left > 0
-                paper_margin = PaperMargin.new(top, right, bottom, left)
-              end
+              paper_margin = PaperMargin.new(top, right, bottom, left)
             end
           end
           paper_margin
